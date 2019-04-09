@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import BSscroll from 'better-scroll'
+  import BScroll from 'better-scroll'
 
   export default {
     props: {
@@ -37,7 +37,7 @@
           return
         }
 
-        this.scroll = new BSscroll(this.$refs.wrapper, {
+        this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
           click: this.click
         })

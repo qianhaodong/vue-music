@@ -44,9 +44,9 @@ let vender = (() => { // 处理浏览器 transform 兼容问题
 })()
 
 export function prefixStyle(style) {
-  if (vender === false) {return false}
+  if (vender === false) { return false }
 
-  if (vender === 'standard') {return style}
+  if (vender === 'standard') { return style }
 
   return vender + style.charAt(0).toUpperCase() + style.substr(1)
 }
