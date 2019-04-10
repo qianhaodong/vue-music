@@ -5,7 +5,6 @@ import axios from 'axios'
 
 export function getSingerList() {
   // const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
-  const url = BASE_URL + '/toplist/artist'
   /* const data = Object.assign({}, commonParams, {
     channel: 'singer',
     page: 'list',
@@ -17,6 +16,8 @@ export function getSingerList() {
     platform: 'yqq',
     g_tk: 5381
   }) */
+  const url = BASE_URL + '/toplist/artist'
+
   return axios.get(url).then((res) => {
     return Promise.resolve(res.data)
   })

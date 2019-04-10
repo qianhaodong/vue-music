@@ -1,7 +1,7 @@
 <template>
   <scroll class="listview" 
-          :data="data" 
           ref="listview" 
+          :data="data" 
           :listen-scroll="listenScroll"
           :probe-type="probeType"
           @scroll="scroll">
@@ -94,6 +94,9 @@
         let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
         let anchorIndex = parseInt(this.touch.anchorIndex) + delta
         this._scrollTo(anchorIndex)
+      },
+      refresh() {
+        this.$refs.listview.refresh()
       },
       scroll(pos) {
         this.scrollY = pos.y

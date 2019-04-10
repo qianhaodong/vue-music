@@ -9,10 +9,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
-const axios = require('axios')
-const express = require('express')
+// const axios = require('axios')
+// const express = require('express')
 
-const app = express()
+// const app = express()
 // const apiRoutes = express.Router()
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -48,8 +48,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll
-    },
-    before(app) { // 这里有个坑（未理解）
+    }
+    /* before(app) { // 这里有个坑（未理解）
       app.get('/api/getDiscList', function(req, res) {
         let url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
 
@@ -65,7 +65,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(err)
         })
       })
-    }
+    } */
   },
   plugins: [
     new webpack.DefinePlugin({
