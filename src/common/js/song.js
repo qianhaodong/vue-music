@@ -31,7 +31,7 @@ export default class Song {
   }
 }
 
-export function createSong(musicData) {
+export function createSong(musicData) { // 创建歌手歌曲对象
   return new Song({
     id: musicData.id,
     singer: filterSinger(musicData.ar),
@@ -39,6 +39,18 @@ export function createSong(musicData) {
     album: musicData.al.name,
     duration: musicData.dt / 1000,
     image: musicData.al.picUrl,
+    url: `https://music.163.com/song/media/outer/url?id=${musicData.id}.mp3`
+  })
+}
+
+export function createDiscSong(musicData) { // 创建歌单歌曲对象
+  return new Song({
+    id: musicData.id,
+    singer: filterSinger(musicData.artists),
+    name: musicData.name,
+    album: musicData.album.name,
+    duration: musicData.duration / 1000,
+    image: musicData.album.picUrl,
     url: `https://music.163.com/song/media/outer/url?id=${musicData.id}.mp3`
   })
 }
