@@ -17,7 +17,7 @@ export function getDiscList() { // 获取歌单列表
   })
 }
 
-export function getDiscDetail(discId) { // 获取歌单详情
+export function getDiscDetail(discId) { // 获取 歌单/排行 详情
   const url = BASE_URL + '/playlist/detail'
   const data = Object.assign({}, {
     id: discId
