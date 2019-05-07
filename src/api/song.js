@@ -1,9 +1,10 @@
-import { BASE_URL } from './config'
+import { LYRIC_URL } from './config'
 import axios from 'axios'
 
 export function getLyric(id) { // 获取歌词
-  const url = BASE_URL + '/lyric'
+  const url = LYRIC_URL
   const data = Object.assign({}, {
+    type: 'lyric',
     id: id
   })
 

@@ -12,7 +12,7 @@ export default class Song {
     this.url = url
   }
 
-  getLyric() {
+  getLyric() { // 歌词处理
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }
@@ -50,7 +50,7 @@ export function createDiscSong(musicData) { // 创建歌单歌曲对象
     name: musicData.name,
     album: musicData.album.name,
     duration: musicData.duration / 1000,
-    image: musicData.album.picUrl,
+    image: musicData.album.picUrl || musicData.album.artist.img1v1Url,
     url: `https://music.163.com/song/media/outer/url?id=${musicData.id}.mp3`
   })
 }

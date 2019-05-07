@@ -24,10 +24,18 @@
       listenScroll: {
         type: Boolean,
         default: false
+      },
+      pullup: { // 上拉刷新参数
+        type: Boolean,
+        default: false
+      },
+      beforeScroll: {
+        type: Boolean,
+        default: false
       }
     },
     mounted() {
-      setTimeout(() => { // 确保DOM已经渲染
+      setTimeout(() => { // 确保 DOM 已经渲染
         this._initScroll()
       }, 20)
     },
@@ -48,6 +56,25 @@
           this.scroll.on('scroll', (pos) => {
             // console.log(pos)
             me.$emit('scroll', pos) // 向父组件传递方法
+          })
+        }
+
+        if (this.pullup) { // 上拉刷新实现条件
+          this.scroll.on('scrollEnd', () => {
+            setTimeout(() => {
+              // console.dir(this.scroll)
+              // console.log(this.scroll.maxScrollY)
+              if (this.scroll.y < (this.scroll.maxScrollY + 50)) {
+                this.$emit('scrollToEnd')
+                // console.log(1)
+              }
+            }, 20)
+          })
+        }
+
+        if (this.beforeScroll) {
+          this.scroll.on('beforeScrollStart', () => {
+            this.$emit('beforeScroll')
           })
         }
       },

@@ -1,6 +1,7 @@
 import * as types from './mutation-types'
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
+import { saveSearch, deleteSearch, clearSearch } from 'common/js/cache'
 
 function findIndex(list, song) { // 获取当前歌曲在随机播放列表里面的索引
   return list.findIndex((item) => {
@@ -34,4 +35,97 @@ export const randomPlay = function({commit}, {list}) {
   commit(types.SET_CURRENT_INDEX, 0)
   commit(types.SET_FULL_SCREEN, true)
   commit(types.SET_PLAYING_STATE, true)
+}
+
+// 插入歌曲
+export const insertSong = function({commit, state}, song) {
+  let playlist = state.playlist.slice() // 修改副本
+  let sequenceList = state.sequenceList.slice()
+  let currentIndex = state.currentIndex
+  // 纪录当前歌曲
+  let currentSong = playlist[currentIndex]
+  // 查找当前列表中是否有待插入的歌曲并返回其索引
+  let fpIndex = findIndex(playlist, song)
+  // 因为是插入歌曲，所以索引 +1
+  currentIndex++
+  // 插入这首歌到当前索引位置
+  playlist.splice(currentIndex, 0, song)
+  // 如果已经包含这首歌
+  if (fpIndex > -1) {
+    // 如果当前插入的序号大于列表中的序号
+    if (currentIndex > fpIndex) {
+      playlist.splice(fpIndex, 1)
+      currentIndex--
+    } else {
+      playlist.splice(fpIndex + 1, 1)
+    }
+  }
+
+  let currentSIndex = findIndex(sequenceList, currentSong) + 1
+  let fsIndex = findIndex(sequenceList, song)
+  sequenceList.splice(currentSIndex, 0, song)
+  if (fsIndex > -1) {
+    if (currentSIndex > fsIndex) {
+      sequenceList.splice(fsIndex,1)
+    } else {
+      sequenceList.splice(fsIndex + 1, 1)
+    }
+  }
+  
+  commit(types.SET_PLAYLIST, playlist)
+  commit(types.SET_SEQUENCE_LIST, sequenceList)
+  commit(types.SET_CURRENT_INDEX, currentIndex)
+  commit(types.SET_FULL_SCREEN, true)
+  commit(types.SET_PLAYING_STATE, true)
+}
+
+// 保存搜索历史
+export const saveSearchHistory = function({commit}, query) {
+  commit(types.SET_SEARCH_HISTORY, saveSearch(query))
+}
+
+// 删除一条搜索历史
+export const deleteSearchHistory = function({commit}, query) {
+  commit(types.SET_SEARCH_HISTORY, deleteSearch(query))
+}
+
+// 删除全部搜索历史
+export const clearSearchHistory = function({commit}) {
+  commit(types.SET_SEARCH_HISTORY, clearSearch())
+}
+
+// 删除播放列表一条歌曲
+export const deleteSong = function({commit, state}, song) {
+  let playlist = state.playlist.slice() // 修改副本
+  let sequenceList = state.sequenceList.slice()
+  let currentIndex = state.currentIndex
+  let pIndex = findIndex(playlist, song)
+  playlist.splice(pIndex, 1)
+  
+  let sIndex = findIndex(sequenceList, song)
+  sequenceList.splice(sIndex, 1)
+
+  if (currentIndex > pIndex || currentIndex === playlist.length) {
+    currentIndex--
+  }
+
+  commit(types.SET_PLAYLIST, playlist)
+  commit(types.SET_SEQUENCE_LIST, sequenceList)
+  commit(types.SET_CURRENT_INDEX, currentIndex)
+
+  /* if (!playlist.length) { // 当整个播放列表全部删除时
+    commit(types.SET_PLAYING_STATE, false)
+  } else {
+    commit(types.SET_PLAYING_STATE, true)
+  } */
+  const playingState = playlist.length > 0
+  commit(types.SET_PLAYING_STATE, playingState)
+}
+
+// 删除播放列表全部歌曲
+export const deleteSongList = function({commit}) {
+  commit(types.SET_PLAYLIST, [])
+  commit(types.SET_SEQUENCE_LIST, [])
+  commit(types.SET_CURRENT_INDEX, -1)
+  commit(types.SET_PLAYING_STATE, false)
 }

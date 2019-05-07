@@ -11,5 +11,7 @@ export const options = {
 }
 
 export const BASE_URL = 'http://u-to-world.com:3000'
+// 获取歌词地址
+export const LYRIC_URL = 'https://api.imjad.cn/cloudmusic/'
 export const ERR_OK = 200
 // export const YERR_OK = 200

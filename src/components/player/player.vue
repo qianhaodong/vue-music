@@ -88,12 +88,18 @@
             <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying"></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
-    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
+    <playlist ref="playlist"></playlist>
+    <audio :src="currentSong.url"
+           ref="audio"
+           @canplay="ready"
+           @error="error"
+           @timeupdate="updateTime"
+           @ended="end"></audio>
   </div>
 </template>
 
@@ -107,6 +113,7 @@
   import { shuffle } from 'common/js/util'
   import  Lyric from 'lyric-parser'
   import Scroll from 'base/scroll/scroll'
+  import Playlist from 'components/playlist/playlist'
 
   const transform = prefixStyle('transform')
   const transition = prefixStyle('transition')
@@ -329,6 +336,9 @@
         }
         this.playingLyric = txt // 当前播放歌词
       },
+      showPlaylist() {
+        this.$refs.playlist.show()
+      },
       middleTouchStart(e) {
         this.touch.initialed = true
         // 用来判断是否是一次移动
@@ -420,6 +430,7 @@
     },
     watch: {
       currentSong(newSong, oldSong) {
+        if (!newSong.id) return
         if (newSong.id === oldSong.id) return 
 
         if (this.currentLyric) { // 清除上一首歌曲歌词
@@ -444,7 +455,8 @@
     components: {
       ProgressBar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      Playlist
     }
   }
 </script>
