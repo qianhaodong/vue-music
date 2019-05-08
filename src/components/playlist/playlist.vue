@@ -5,14 +5,14 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon"></i>
-            <span class="text"></span>
+            <i class="icon" :class="iconMode" @click="changeMode"></i>
+            <span class="text">{{ modeText }}</span>
             <span class="clear" @click="showConfirm">
               <i class="icon-clear"></i>
             </span>
           </h1>
         </div>
-        <scroll class="list-content" :data="sequenceList" ref="listContent">
+        <scroll :refreshDelay="refreshDelay" class="list-content" :data="sequenceList" ref="listContent">
           <transition-group name="list" tag="ul">
             <li class="item" v-for="(item, index) in sequenceList" :key="item.id" @click="selectItem(item, index)" ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
@@ -27,7 +27,7 @@
           </transition-group>
         </scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -37,6 +37,7 @@
         </div>
       </div>
       <confirm ref="confirm" text="是否清空播放列表" confirmBtnText="清空" @click="confirmClear"></confirm>
+      <add-song ref="addSong"></add-song>
     </div>
   </transition>
 </template>
@@ -44,21 +45,23 @@
 <script>
   import { mapGetters, mapMutations, mapActions } from 'vuex'
   import { playMode } from 'common/js/config'
+  import { playerMixin } from 'common/js/mixin'
   import Scroll from 'base/scroll/scroll'
   import Confirm from 'base/confirm/confirm'
+  import AddSong from 'components/add-song/add-song'
 
   export default {
+    mixins: [playerMixin],
     data() {
       return {
-        showFlag: false
+        showFlag: false,
+        refreshDelay: 100
       }
     },
     computed: {
-      ...mapGetters([
-        'sequenceList',
-        'currentSong',
-        'playlist'
-      ])
+      modeText() {
+        return this.mode === playMode.sequence ? '顺序播放' : this.mode === playMode.random ? '随机播放' : '单曲循环'
+      }
     },
     methods: {
       show() {
@@ -106,10 +109,13 @@
         this.deleteSongList()
         this.hide()
       },
-      ...mapMutations({
+      addSong() {
+        this.$refs.addSong.show()
+      },
+      /* ...mapMutations({
         setCurrentIndex: 'SET_CURRENT_INDEX',
         setPlayingState: 'SET_PLAYING_STATE'
-      }),
+      }), */
       ...mapActions([
         'deleteSong',
         'deleteSongList'
@@ -125,7 +131,8 @@
     },
     components: {
       Scroll,
-      Confirm
+      Confirm,
+      AddSong
     }
   }
 </script>

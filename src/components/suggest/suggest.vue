@@ -48,10 +48,10 @@
         type: String,
         default: ''
       },
-      showSinger: {
+      /* showSinger: {
         type: Boolean,
         default: true
-      }
+      } */
     },
     methods: {
       _search() {
@@ -85,7 +85,7 @@
       refresh() {
         this.$refs.suggest.refresh()
       },
-      listScroll() {
+      listScroll() { // 移动端滚动搜索列表时，隐藏输入法
         this.$emit('listScroll')
       },
       _checkMore(data) { // 上拉刷新结束条件

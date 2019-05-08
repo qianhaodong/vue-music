@@ -104,21 +104,22 @@
 </template>
 
 <script>
-  import { mapGetters, mapMutations } from 'vuex'
+  import { mapGetters, mapMutations, mapActions } from 'vuex'
   import animations from 'create-keyframe-animation'
   import { prefixStyle } from 'common/js/dom'
   import ProgressBar from 'base/progress-bar/progress-bar'
   import ProgressCircle from 'base/progress-circle/progress-circle'
   import { playMode } from 'common/js/config'
-  import { shuffle } from 'common/js/util'
   import  Lyric from 'lyric-parser'
   import Scroll from 'base/scroll/scroll'
   import Playlist from 'components/playlist/playlist'
+  import { playerMixin } from 'common/js/mixin'
 
   const transform = prefixStyle('transform')
   const transition = prefixStyle('transition')
   
   export default {
+    mixins: [playerMixin],
     data() {
       return {
         songReady: false,
@@ -137,9 +138,9 @@
       miniIcon() {
         return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
       },
-      iconMode() {
+      /* iconMode() {
         return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-      },
+      }, */
       disableCls() {
         return this.songReady ? '' : 'disable'
       },
@@ -151,12 +152,8 @@
       }, 
       ...mapGetters([
         'fullScreen',
-        'playlist',
-        'currentSong',
         'playing', // 播放状态
-        'currentIndex',
-        'mode', // 播放模式
-        'sequenceList'
+        'currentIndex'
       ])
     },
     created() {
@@ -267,6 +264,7 @@
       },
       ready() { // 当歌曲准备完成后才能切换
         this.songReady = true
+        this.savePlayHistory(this.currentSong)
       },
       error() { // 防止报错
         this.songReady = true
@@ -291,7 +289,7 @@
           this.currentLyric.seek(currentTime * 1000)
         }
       },
-      changeMode() { // 改变播放模式
+      /* changeMode() { // 改变播放模式
         const mode = (this.mode + 1) % 3
         this.setPlayMode(mode)
         let list = null
@@ -311,7 +309,7 @@
         })
         // console.log(index)
         this.setCurrentIndex(index)
-      },
+      }, */
       getLyric() { // 获取歌词
         this.currentSong.getLyric().then((lyric) => {
           this.currentLyric = new Lyric(lyric, this.handleLyric)
@@ -421,12 +419,11 @@
         }
       },
       ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE',
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlayMode: 'SET_PLAY_MODE',
-        setPlayList: 'SET_PLAYLIST'
-      })
+        setFullScreen: 'SET_FULL_SCREEN'
+      }),
+      ...mapActions([
+        'savePlayHistory'
+      ])
     },
     watch: {
       currentSong(newSong, oldSong) {

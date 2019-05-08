@@ -4,7 +4,7 @@
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
     <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
-      <scroll class="shortcut" :data="shortcut" ref="shortcut">
+      <scroll :refreshDelay="refreshDelay" class="shortcut" :data="shortcut" ref="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -42,14 +42,13 @@
   import { getHotKey } from 'api/search'
   import { ERR_OK } from 'api/config'
   import { mapActions, mapGetters } from 'vuex'
-  import { playlistMixin } from 'common/js/mixin'
+  import { playlistMixin, searchMixin } from 'common/js/mixin'
 
   export default {
-    mixins: [playlistMixin],
+    mixins: [playlistMixin, searchMixin],
     data() {
       return {
-        hotKey: [],
-        query: ''
+        hotKey: []
       }
     },
     created() {
@@ -58,10 +57,7 @@
     computed: {
       shortcut() {
         return this.hotKey.concat(this.searchHistory)
-      },
-      ...mapGetters([
-        'searchHistory'
-      ])
+      }
     },
     methods: {
       handlePlaylist(playlist) {
@@ -72,7 +68,7 @@
         this.$refs.searchResult.style.bottom = bottom
         this.$refs.suggest.refresh()
       },
-      addQuery(query) {
+      /* addQuery(query) {
         this.$refs.searchBox.setQuery(query)
       },
       onQueryChange(query) { // 获取搜索框字符
@@ -83,7 +79,7 @@
       },
       saveSearch() {
         this.saveSearchHistory(this.query)
-      },
+      }, */
       deleteOne(item) {
         this.deleteSearchHistory(item)
       },
@@ -102,8 +98,6 @@
         })
       },
       ...mapActions([
-        'saveSearchHistory',
-        'deleteSearchHistory',
         'clearSearchHistory'
       ])
     },
