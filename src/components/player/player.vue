@@ -96,7 +96,7 @@
     <playlist ref="playlist"></playlist>
     <audio :src="currentSong.url"
            ref="audio"
-           @canplay="ready"
+           @play="ready"
            @error="error"
            @timeupdate="updateTime"
            @ended="end"></audio>
@@ -236,6 +236,7 @@
         }
         if (this.playlist.length === 1) { // 当播放列表只有一首歌时，循环播放
           this.loop()
+          return
         } else {
           let index = this.currentIndex + 1
           if (index === this.playlist.length) { index = 0 }
@@ -252,6 +253,7 @@
         }
         if (this.playlist.length === 1) { // 当播放列表只有一首歌时，循环播放
           this.loop()
+          return
         } else {
           let index = this.currentIndex - 1
           if (index === -1) { index = this.playlist.length - 1 }
@@ -312,6 +314,9 @@
       }, */
       getLyric() { // 获取歌词
         this.currentSong.getLyric().then((lyric) => {
+          if (this.currentSong.lyric !== lyric) { // 防止歌词错乱
+            return
+          }
           this.currentLyric = new Lyric(lyric, this.handleLyric)
           if (this.playing) {
             this.currentLyric.play()
@@ -437,7 +442,8 @@
           this.$refs.audio.play()
           this.getLyric()
         }) */
-        setTimeout(() => {
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => { // 延时效果，当DOM中元素渲染结束后才能播放
           this.$refs.audio.play()
           this.getLyric()
         }, 1000)
